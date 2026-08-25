@@ -5,77 +5,39 @@ on:
   push:
     branches: [main]
 
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-D warnings"
+
 permissions:
   contents: read
 
 jobs:
-  schema:
+  tools:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          node-version: "22"
-      - run: npm install --no-save ajv-cli@5 ajv-formats@3
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
 
-      - name: Validate every entry against the schema
-        run: |
-          shopt -s nullglob
-          entries=(plugins/*.json)
-          if [ ${#entries[@]} -eq 0 ]; then
-            echo "No entries yet — nothing to validate."; exit 0
-          fi
-          npx ajv validate --spec=draft2020 -c ajv-formats \
-            -s schema/plugin-entry.schema.json \
-            -d "plugins/*.json" --all-errors --errors=text
+      - name: Format
+        run: cargo fmt --all -- --check
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets
+      - name: Test
+        run: cargo test --workspace
 
-      - name: Entry filename must match its id
-        run: |
-          shopt -s nullglob
-          fail=0
-          for f in plugins/*.json; do
-            id=$(node -e "process.stdout.write(require('./$f').id)")
-            expected="plugins/$id.json"
-            if [ "$f" != "$expected" ]; then
-              echo "::error file=$f::filename does not match id; expected $expected"
-              fail=1
-            fi
-          done
-          exit $fail
-
-      - name: Release URLs must be immutable and reachable
-        run: |
-          shopt -s nullglob
-          fail=0
-          for f in plugins/*.json; do
-            for url in $(node -e "
-              const e=require('./$f');
-              e.versions.forEach(v=>console.log(v.url));
-            "); do
-              case "$url" in
-                *"/releases/download/"*) ;;
-                *) echo "::error file=$f::$url is not a release asset URL"; fail=1; continue;;
-              esac
-              code=$(curl -sIL -o /dev/null -w '%{http_code}' "$url")
-              if [ "$code" != "200" ]; then
-                echo "::error file=$f::$url returned HTTP $code"; fail=1
-              fi
-            done
-          done
-          exit $fail
-
-  policy:
+  entries:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Refuse multiplayer targets
-        run: |
-          shopt -s nullglob
-          fail=0
-          for f in plugins/*.json; do
-            if grep -q '"multiplayer"[[:space:]]*:[[:space:]]*true' "$f"; then
-              echo "::error file=$f::multiplayer titles are refused; see POLICY.md"
-              fail=1
-            fi
-          done
-          exit $fail
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Schema, id, policy, release assets and checksums
+        run: cargo run -p registry-tools -- validate --check-assets
+
+      - name: index.json is in sync with plugins/
+        run: cargo run -p registry-tools -- build-index --check

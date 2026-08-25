@@ -44,6 +44,25 @@ stable and live reload nearly free.
 | `verified` | Reviewed here, signed by a registered author key | yes |
 | `unverified` | Installed by URL or local file, never listed here | **no** |
 
+## Tooling
+
+Everything a submission is checked against lives in `crates/registry-tools`, a
+small Rust binary CI runs on every pull request. Schema conformance stays in
+`schema/`, which the tool loads at runtime, so the published schema remains the
+single source of truth for plugin authors; the tool adds the rules a schema
+cannot express.
+
+```bash
+cargo run -p registry-tools -- validate                  # offline: schema, id, policy, URL shape
+cargo run -p registry-tools -- validate --check-assets   # also downloads each asset and verifies its sha256
+cargo run -p registry-tools -- build-index               # regenerate index.json from plugins/
+cargo run -p registry-tools -- build-index --check       # fail if index.json is out of date
+```
+
+`index.json` is generated, never hand-edited, and its `generated_at` field stays
+`null` on purpose: a build timestamp would make every regeneration a diff, and
+git already records when the file changed.
+
 ## Layout
 
 ```
@@ -52,5 +71,6 @@ registry/
 ├── index.json          ← generated from plugins/, published via Pages
 ├── schema/             ← JSON Schema for entries and for plugin manifests
 ├── template/           ← copy this to start a plugin
+├── crates/             ← the tooling that validates entries and builds the index
 └── POLICY.md
 ```
