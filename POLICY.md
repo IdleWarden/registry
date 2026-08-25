@@ -17,8 +17,11 @@ documented automation or modding interface.
 * Any game with a competitive or ranked multiplayer mode.
 * Anything circumventing, disabling or probing an anti-cheat or protection
   mechanism.
-* Plugins requiring memory reading, code injection or driver installation — the
-  plugin model provides no mechanism for these.
+* Plugins requiring memory reading, code injection or driver installation.
+* **Bridge plugins**, which talk to a mod running inside the game process
+  (ADR-0014). Building one and installing it by hand is legitimate; the registry
+  will not distribute it, because we neither host nor review the mod binary it
+  depends on.
 * Games whose terms forbid automation.
 * Anything aimed at advantage over other human players, or at acquiring
   tradeable goods for sale.

@@ -8,6 +8,7 @@ use crate::entry::{Entry, RawEntry};
 use crate::problem::Problem;
 
 const RELEASE_ASSET_MARKER: &str = "/releases/download/";
+const BRIDGE_CAPABILITY_PREFIX: &str = "bridge:";
 
 pub fn schema_problems(validator: &Validator, raw: &RawEntry) -> Vec<Problem> {
     validator
@@ -16,6 +17,31 @@ pub fn schema_problems(validator: &Validator, raw: &RawEntry) -> Vec<Problem> {
             let at = error.instance_path().to_string();
             let at = if at.is_empty() { "/".to_owned() } else { at };
             Problem::new(&raw.path, format!("{at}: {error}"))
+        })
+        .collect()
+}
+
+/// Runs before schema validation on purpose: the entry schema does not list
+/// `bridge:` among its capability patterns, so a bridge entry would otherwise
+/// fail with an opaque pattern mismatch instead of the reason it was refused.
+pub fn bridge_problems(raw: &RawEntry) -> Vec<Problem> {
+    let Some(versions) = raw.value.get("versions").and_then(Value::as_array) else {
+        return Vec::new();
+    };
+
+    versions
+        .iter()
+        .filter_map(|version| version.get("capabilities")?.as_array())
+        .flatten()
+        .filter_map(Value::as_str)
+        .filter(|capability| capability.starts_with(BRIDGE_CAPABILITY_PREFIX))
+        .map(|capability| {
+            Problem::new(
+                &raw.path,
+                format!(
+                    "`{capability}` needs a mod inside the game process; the registry does not                      distribute bridge plugins. See POLICY.md and ADR-0014."
+                ),
+            )
         })
         .collect()
 }
@@ -83,6 +109,12 @@ pub fn check(
     let mut problems = Vec::new();
 
     for raw in entries {
+        let bridges = bridge_problems(raw);
+        if !bridges.is_empty() {
+            problems.extend(bridges);
+            continue;
+        }
+
         let schema = schema_problems(validator, raw);
         if !schema.is_empty() {
             problems.extend(schema);

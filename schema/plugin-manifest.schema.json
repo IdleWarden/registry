@@ -151,7 +151,7 @@
       "description": "Shown to the user at install time and enforced by the host. NOT hot-reloadable.",
       "items": {
         "type": "string",
-        "pattern": "^(capture|input\\.(mouse|keyboard|gamepad)|fs\\.read:.+|net:.+)$"
+        "pattern": "^(capture|input\\.(mouse|keyboard|gamepad)|fs\\.read:.+|net:.+|bridge:[a-z0-9-]{1,64})$"
       }
     }
   }

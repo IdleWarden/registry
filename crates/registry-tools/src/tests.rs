@@ -235,3 +235,31 @@ fn the_index_carries_no_timestamp_so_regeneration_is_a_no_op() {
         index::render(&index::build(&entries))
     );
 }
+
+#[test]
+fn an_entry_declaring_a_bridge_is_refused_with_the_reason_not_a_pattern_error() {
+    let mut value = valid_entry("dev.example.plugin");
+    value["versions"][0]["capabilities"] = json!(["capture", "bridge:cookie-clicker"]);
+    let entry = raw("dev.example.plugin.json", value);
+
+    let validator = validate::build_validator(&entry_schema()).unwrap();
+    let probe = FakeProbe(HashMap::new());
+    let problems = validate::check(std::slice::from_ref(&entry), &validator, Some(&probe));
+
+    assert_eq!(problems.len(), 1, "{problems:?}");
+    assert!(
+        problems[0].message.contains("bridge:cookie-clicker"),
+        "{}",
+        problems[0]
+    );
+    assert!(problems[0].message.contains("ADR-0014"), "{}", problems[0]);
+}
+
+#[test]
+fn ordinary_capabilities_are_untouched_by_the_bridge_check() {
+    let mut value = valid_entry("dev.example.plugin");
+    value["versions"][0]["capabilities"] = json!(["capture", "input.mouse"]);
+    let entry = raw("dev.example.plugin.json", value);
+
+    assert!(validate::bridge_problems(&entry).is_empty());
+}
