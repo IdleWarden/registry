@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://idlewarden.github.io/registry/schema/plugin-entry.schema.json",
+  "title": "IdleWarden registry entry",
+  "description": "One file per plugin under plugins/. The registry indexes plugins; it does not host them.",
+  "type": "object",
+  "required": ["id", "name", "game", "multiplayer", "source", "versions"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+(\\.[a-z0-9-]+)+$",
+      "maxLength": 128,
+      "description": "Reverse-DNS, lowercase. Must match the plugin manifest id."
+    },
+    "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "description": { "type": "string", "maxLength": 400 },
+    "authors": { "type": "array", "items": { "type": "string" } },
+    "license": { "type": "string", "description": "SPDX identifier." },
+    "homepage": { "type": "string", "format": "uri" },
+    "game": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string" },
+        "steam_appid": { "type": "integer", "minimum": 1 },
+        "executable": { "type": "string" },
+        "window_title": { "type": "string" }
+      }
+    },
+    "multiplayer": {
+      "const": false,
+      "description": "Entries for games with any competitive or ranked multiplayer mode are refused. See POLICY.md."
+    },
+    "source": {
+      "type": "object",
+      "required": ["repository"],
+      "additionalProperties": false,
+      "properties": {
+        "repository": { "type": "string", "format": "uri" }
+      }
+    },
+    "trust": { "enum": ["official", "verified"], "default": "verified" },
+    "versions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["version", "api_version", "url", "sha256"],
+        "additionalProperties": false,
+        "properties": {
+          "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.-]+)?$"
+          },
+          "api_version": {
+            "type": "string",
+            "description": "Semver requirement, e.g. \"^0.1\"."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Immutable release asset URL. A tag, never a branch."
+          },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "signature": {
+            "type": "string",
+            "description": "Detached signature by a registered author key. Required for trust=verified."
+          },
+          "yanked": { "type": "boolean", "default": false },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^(capture|input\\.(mouse|keyboard|gamepad)|fs\\.read:.+|net:.+)$"
+            }
+          }
+        }
+      }
+    }
+  }
+}

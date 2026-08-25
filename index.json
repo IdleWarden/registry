@@ -1,0 +1,7 @@
+{
+  "$comment": "Generated from plugins/*.json by CI. Do not edit by hand.",
+  "schema_version": "1.0.0",
+  "api_version": "0.1.0",
+  "generated_at": null,
+  "plugins": []
+}

@@ -1,0 +1,27 @@
+{
+  "id": "dev.example.cookie-clicker",
+  "name": "Cookie Clicker",
+  "description": "Buys upgrades and collects golden cookies. Single-player only.",
+  "authors": ["Your Name <you@example.com>"],
+  "license": "MIT",
+  "homepage": "https://github.com/you/idlewarden-cookie-clicker",
+  "game": {
+    "title": "Cookie Clicker",
+    "steam_appid": 1454400,
+    "executable": "CookieClicker.exe"
+  },
+  "multiplayer": false,
+  "source": {
+    "repository": "https://github.com/you/idlewarden-cookie-clicker"
+  },
+  "trust": "verified",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "api_version": "^0.1",
+      "url": "https://github.com/you/idlewarden-cookie-clicker/releases/download/v1.0.0/plugin.zip",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "capabilities": ["capture", "input.mouse"]
+    }
+  ]
+}
