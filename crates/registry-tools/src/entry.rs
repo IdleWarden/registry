@@ -15,6 +15,7 @@ pub struct RawEntry {
 
 #[derive(Debug, Deserialize)]
 pub struct Entry {
+    pub id: String,
     pub multiplayer: bool,
     pub versions: Vec<EntryVersion>,
 }
@@ -23,6 +24,44 @@ pub struct Entry {
 pub struct EntryVersion {
     pub url: String,
     pub sha256: String,
+    #[serde(default)]
+    pub capabilities: Vec<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ModEntry {
+    pub plugin: String,
+    pub bridge: BridgeRef,
+    pub source: Source,
+    pub versions: Vec<ModVersion>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct BridgeRef {
+    pub name: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Source {
+    pub repository: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ModVersion {
+    #[serde(flatten)]
+    pub asset: EntryVersion,
+    pub attestation: Attestation,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Attestation {
+    pub repository: String,
+}
+
+impl ModEntry {
+    pub fn assets(&self) -> Vec<&EntryVersion> {
+        self.versions.iter().map(|v| &v.asset).collect()
+    }
 }
 
 pub fn load_all(dir: &Path) -> Result<Vec<RawEntry>> {

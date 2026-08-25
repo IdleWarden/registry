@@ -1,0 +1,33 @@
+{
+  "id": "dev.example.cookie-clicker-bridge",
+  "name": "Cookie Clicker bridge",
+  "description": "Exposes the game's counters and upgrade actions over a bridge endpoint.",
+  "authors": ["Your Name <you@example.com>"],
+  "license": "MIT",
+  "homepage": "https://github.com/you/idlewarden-cookie-clicker-mod",
+  "plugin": "dev.example.cookie-clicker",
+  "bridge": {
+    "name": "cookie-clicker"
+  },
+  "loader": "bepinex",
+  "game": {
+    "title": "Cookie Clicker",
+    "steam_appid": 1454400
+  },
+  "source": {
+    "repository": "https://github.com/you/idlewarden-cookie-clicker-mod"
+  },
+  "trust": "verified",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "api_version": "^0.1",
+      "url": "https://github.com/you/idlewarden-cookie-clicker-mod/releases/download/v1.0.0/mod.zip",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "attestation": {
+        "repository": "you/idlewarden-cookie-clicker-mod"
+      },
+      "game_versions": ["2.052"]
+    }
+  ]
+}

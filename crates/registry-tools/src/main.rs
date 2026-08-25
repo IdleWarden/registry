@@ -10,13 +10,14 @@ mod validate;
 mod tests;
 
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
 
 use asset::HttpProbe;
+use validate::Schemas;
 
 #[derive(Parser)]
 #[command(name = "registry-tools", about = "IdleWarden plugin registry tooling")]
@@ -53,31 +54,36 @@ fn main() -> ExitCode {
 }
 
 fn run(cli: &Cli) -> Result<bool> {
-    let entries = entry::load_all(&cli.root.join("plugins"))?;
+    let plugins = entry::load_all(&cli.root.join("plugins"))?;
+    let mods = entry::load_all(&cli.root.join("mods"))?;
 
     match cli.command {
         Command::Validate { check_assets } => {
-            let schema_path = cli.root.join("schema/plugin-entry.schema.json");
-            let schema = fs::read_to_string(&schema_path)
-                .with_context(|| format!("cannot read {}", schema_path.display()))?;
-            let validator = validate::build_validator(&serde_json::from_str(&schema)?)?;
+            let schemas = Schemas {
+                plugin: load_schema(&cli.root, "plugin-entry.schema.json")?,
+                mod_entry: load_schema(&cli.root, "mod-entry.schema.json")?,
+            };
 
             let probe = HttpProbe;
             let probe = check_assets.then_some(&probe as &dyn asset::AssetProbe);
-            let problems = validate::check(&entries, &validator, probe);
+            let problems = validate::check(&plugins, &mods, &schemas, probe);
 
             for problem in &problems {
                 eprintln!("{}", problem.annotate());
             }
             if problems.is_empty() {
-                println!("{} entries, no problems.", entries.len());
+                println!(
+                    "{} plugins, {} mods, no problems.",
+                    plugins.len(),
+                    mods.len()
+                );
             }
             Ok(problems.is_empty())
         }
 
         Command::BuildIndex { check } => {
             let path = cli.root.join("index.json");
-            let rendered = index::render(&index::build(&entries));
+            let rendered = index::render(&index::build(&plugins, &mods));
 
             if check {
                 let current = fs::read_to_string(&path)
@@ -95,8 +101,15 @@ fn run(cli: &Cli) -> Result<bool> {
 
             fs::write(&path, &rendered)
                 .with_context(|| format!("cannot write {}", path.display()))?;
-            println!("{} written with {} entries.", path.display(), entries.len());
+            println!("{} written.", path.display());
             Ok(true)
         }
     }
+}
+
+fn load_schema(root: &Path, name: &str) -> Result<jsonschema::Validator> {
+    let path = root.join("schema").join(name);
+    let text =
+        fs::read_to_string(&path).with_context(|| format!("cannot read {}", path.display()))?;
+    validate::build_validator(&serde_json::from_str(&text)?)
 }

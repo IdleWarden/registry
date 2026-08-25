@@ -36,6 +36,22 @@ stable and live reload nearly free.
 5. Open a pull request. CI validates the schema, the id format, and that the
    URL and checksum resolve.
 
+## Mods
+
+A plugin that declares a `bridge:<name>` capability needs a **mod** running
+inside the game, and mods are indexed here too, under `mods/`. Same rule as
+plugins: we index, we do not host.
+
+The promise is different and says so out loud. A plugin is data, so a human
+reads it. A mod is a binary, so instead of pretending to review it we require it
+to be **reproducible from public source**: a public repository, a CI build
+attestation verified by `gh attestation verify`, and a checksum. `verified` on a
+mod means "built by a public CI run from that public commit", nothing more.
+
+Start from [`mods/EXAMPLE.json.template`](mods/EXAMPLE.json.template). CI refuses
+a plugin that declares a bridge nothing provides, and a mod that serves a plugin
+that does not exist.
+
 ## Trust levels
 
 | Level | Meaning | Auto-update |
@@ -55,7 +71,7 @@ cannot express.
 ```bash
 cargo run -p registry-tools -- validate                  # offline: schema, id, policy, URL shape
 cargo run -p registry-tools -- validate --check-assets   # also downloads each asset and verifies its sha256
-cargo run -p registry-tools -- build-index               # regenerate index.json from plugins/
+cargo run -p registry-tools -- build-index               # regenerate index.json from plugins/ and mods/
 cargo run -p registry-tools -- build-index --check       # fail if index.json is out of date
 ```
 
@@ -68,7 +84,8 @@ git already records when the file changed.
 ```
 registry/
 ├── plugins/<id>.json   ← the source of truth, one file per plugin
-├── index.json          ← generated from plugins/, published via Pages
+├── mods/<id>.json      ← mods that expose a bridge endpoint (ADR-0014)
+├── index.json          ← generated from plugins/ and mods/, published via Pages
 ├── schema/             ← JSON Schema for entries and for plugin manifests
 ├── template/           ← copy this to start a plugin
 ├── crates/             ← the tooling that validates entries and builds the index

@@ -17,14 +17,42 @@ documented automation or modding interface.
 * Any game with a competitive or ranked multiplayer mode.
 * Anything circumventing, disabling or probing an anti-cheat or protection
   mechanism.
-* Plugins requiring memory reading, code injection or driver installation.
-* **Bridge plugins**, which talk to a mod running inside the game process
-  (ADR-0014). Building one and installing it by hand is legitimate; the registry
-  will not distribute it, because we neither host nor review the mod binary it
-  depends on.
+* Plugins requiring memory reading, code injection or driver installation from
+  the Core itself. There is no mechanism for these and there will not be one.
 * Games whose terms forbid automation.
 * Anything aimed at advantage over other human players, or at acquiring
   tradeable goods for sale.
+
+## Mods are indexed too, under a different promise
+
+A **mod** runs inside the game process and exposes a bridge endpoint
+(ADR-0014). It is a binary, so nobody is going to read it, and pretending
+otherwise would empty the `verified` badge of its meaning.
+
+So a mod entry is not verified by review. It is verified by **provenance**:
+
+- `source.repository` is public and is where the artefact comes from,
+- every version carries an `attestation.repository`, and CI runs
+  `gh attestation verify` against the downloaded artefact,
+- the declared `sha256` matches what CI downloads.
+
+`verified` on a mod claims exactly one thing: *this binary was built by a public
+CI run from that public repository*. It is not a code review and must never be
+presented as one.
+
+The registry never hosts a mod binary, exactly as it never hosts a plugin
+package.
+
+### Mod review checklist
+
+- [ ] The source repository is public and actually contains the mod.
+- [ ] The attestation repository matches the source repository.
+- [ ] `plugin` names a real entry under `plugins/`, and that entry declares
+      `bridge:<name>` matching this mod's `bridge.name`.
+- [ ] `loader` is accurate; `manual` is only for a documented file drop.
+- [ ] `game_versions` is populated. A mod is tied to a game build, not a title.
+- [ ] The game is one the plugin policy already accepts. A bridge does not buy
+      an exemption from anything above.
 
 ## Review checklist
 

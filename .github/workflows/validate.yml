@@ -36,8 +36,42 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
 
-      - name: Schema, id, policy, release assets and checksums
+      - name: Schema, ids, policy, release assets and checksums
         run: cargo run -p registry-tools -- validate --check-assets
 
-      - name: index.json is in sync with plugins/
+      - name: index.json is in sync with plugins/ and mods/
         run: cargo run -p registry-tools -- build-index --check
+
+  attestation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Every mod artefact is attested to its source repository
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shopt -s nullglob
+          entries=(mods/*.json)
+          if [ ${#entries[@]} -eq 0 ]; then
+            echo "No mods yet, nothing to attest."; exit 0
+          fi
+          fail=0
+          for f in "${entries[@]}"; do
+            count=$(jq '.versions | length' "$f")
+            for i in $(seq 0 $((count - 1))); do
+              url=$(jq -r ".versions[$i].url" "$f")
+              repo=$(jq -r ".versions[$i].attestation.repository" "$f")
+              artefact=$(mktemp)
+              if ! curl --fail --location --silent --show-error --output "$artefact" "$url"; then
+                echo "::error file=$f::cannot download $url"
+                fail=1
+                continue
+              fi
+              if ! gh attestation verify "$artefact" --repo "$repo"; then
+                echo "::error file=$f::$url has no provenance attestation from $repo"
+                fail=1
+              fi
+            done
+          done
+          exit $fail

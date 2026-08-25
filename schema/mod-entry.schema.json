@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://idlewarden.github.io/registry/schema/mod-entry.schema.json",
+  "title": "IdleWarden registry mod entry",
+  "description": "One file per mod under mods/. A mod is a binary that runs inside the game process and exposes a bridge endpoint (ADR-0014). The registry indexes it; it never hosts it, and never claims to have read it.",
+  "type": "object",
+  "required": ["id", "name", "plugin", "bridge", "loader", "source", "versions"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+(\\.[a-z0-9-]+)+$",
+      "maxLength": 128,
+      "description": "Reverse-DNS, lowercase. Distinct from the plugin id."
+    },
+    "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "description": { "type": "string", "maxLength": 400 },
+    "authors": { "type": "array", "items": { "type": "string" } },
+    "license": { "type": "string", "description": "SPDX identifier." },
+    "homepage": { "type": "string", "format": "uri" },
+    "plugin": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+(\\.[a-z0-9-]+)+$",
+      "description": "The plugin this mod serves. Must match an entry under plugins/."
+    },
+    "bridge": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]{1,64}$",
+          "description": "Endpoint name. The plugin declares it as `bridge:<name>`."
+        }
+      }
+    },
+    "loader": {
+      "enum": ["bepinex", "melonloader", "reloaded-ii", "manual"],
+      "description": "How the user installs it. `manual` means a documented file drop."
+    },
+    "game": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string" },
+        "steam_appid": { "type": "integer", "minimum": 1 },
+        "executable": { "type": "string" },
+        "window_title": { "type": "string" }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["repository"],
+      "additionalProperties": false,
+      "properties": {
+        "repository": {
+          "type": "string",
+          "format": "uri",
+          "description": "Public source. Not optional: an unreproducible binary cannot be verified."
+        }
+      }
+    },
+    "trust": { "enum": ["official", "verified"], "default": "verified" },
+    "versions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["version", "api_version", "url", "sha256", "attestation"],
+        "additionalProperties": false,
+        "properties": {
+          "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.-]+)?$"
+          },
+          "api_version": {
+            "type": "string",
+            "description": "Bridge protocol requirement, e.g. \"^0.1\"."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Immutable release asset URL. A tag, never a branch."
+          },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "attestation": {
+            "type": "object",
+            "description": "Build provenance. CI runs `gh attestation verify` against this.",
+            "required": ["repository"],
+            "additionalProperties": false,
+            "properties": {
+              "repository": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$",
+                "description": "owner/repo that produced the artefact. Must match source.repository."
+              }
+            }
+          },
+          "game_versions": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Game builds this was tested against. A mod is tied to a build, not a title."
+          },
+          "yanked": { "type": "boolean", "default": false }
+        }
+      }
+    }
+  }
+}
