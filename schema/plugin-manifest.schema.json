@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://idlewarden.github.io/registry/schema/plugin-manifest.schema.json",
+  "title": "IdleWarden plugin manifest (plugin.json)",
+  "description": "The contract between a plugin and the host, plus the metadata the registry and UI need. Behaviour lives in rules.json, not here — that split is what makes hot reload safe (ADR-0012).",
+  "type": "object",
+  "required": ["id", "name", "version", "api_version", "game", "multiplayer", "rights"],
+  "additionalProperties": false,
+
+  "properties": {
+    "$schema": { "type": "string" },
+
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+(\\.[a-z0-9-]+)+$",
+      "maxLength": 128,
+      "description": "Reverse-DNS. Immutable: changing it creates a different plugin."
+    },
+    "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+
+    "version": {
+      "type": "string",
+      "pattern": "^\\d{2}\\.\\d{1,2}\\.\\d{1,2}$",
+      "description": "calver-short, YY.M.PATCH (e.g. 26.8.1). Managed by FerrFlow — do not edit by hand. A plugin version tracks the GAME's patches, which carry no compatibility meaning, so calendar versioning is honest where semver would lie. It still sorts correctly as semver, so the host's update check needs no special case.",
+      "examples": ["26.8.1", "26.12.3"]
+    },
+
+    "api_version": {
+      "type": "string",
+      "description": "Semver REQUIREMENT against the host's plugin API. Stays semver — this one genuinely carries compatibility meaning and must never be calver.",
+      "examples": ["^0.1", ">=0.1, <0.3"]
+    },
+
+    "game": {
+      "type": "object",
+      "required": ["title"],
+      "additionalProperties": false,
+      "description": "How to recognise the game, and what has actually been tested against it.",
+      "properties": {
+        "title": { "type": "string" },
+        "steam_appid": { "type": "integer", "minimum": 1 },
+        "executable": { "type": "string" },
+        "window_title": { "type": "string" },
+        "tested_versions": {
+          "type": "array",
+          "description": "Drives the compatibility banner in the UI. An empty list means 'never verified' and is shown as such — silence is not a claim of support.",
+          "items": {
+            "type": "object",
+            "required": ["version", "status"],
+            "additionalProperties": false,
+            "properties": {
+              "version": { "type": "string", "description": "Game version or build id as the game itself reports it." },
+              "status": {
+                "enum": ["verified", "partial", "broken"],
+                "description": "verified: everything works. partial: some intents fail (say which in notes). broken: known not to work — the host refuses to start rather than flailing."
+              },
+              "tested_on": { "type": "string", "format": "date" },
+              "notes": { "type": "string", "maxLength": 400 }
+            }
+          }
+        }
+      }
+    },
+
+    "multiplayer": {
+      "const": false,
+      "description": "Games with any competitive or ranked multiplayer mode are refused by the registry. See POLICY.md."
+    },
+
+    "presentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "For the registry listing and the app. Never read by the runtime, which is why editing it is a cheap, hot-reloadable change.",
+      "properties": {
+        "description": { "type": "string", "maxLength": 400 },
+        "icon": { "type": "string", "description": "Path inside the package, e.g. assets/icon.png. 128x128 PNG." },
+        "screenshots": {
+          "type": "array",
+          "maxItems": 6,
+          "items": {
+            "type": "object",
+            "required": ["path"],
+            "additionalProperties": false,
+            "properties": {
+              "path": { "type": "string" },
+              "caption": { "type": "string", "maxLength": 140 }
+            }
+          }
+        },
+        "tags": { "type": "array", "items": { "type": "string" }, "maxItems": 8 },
+        "homepage": { "type": "string", "format": "uri" }
+      }
+    },
+
+    "rights": {
+      "type": "object",
+      "required": ["license", "asset_provenance"],
+      "additionalProperties": false,
+      "description": "Plugins ship crops of copyrighted game UI. Making provenance a required, declared field means the question gets answered once, by the author, instead of never.",
+      "properties": {
+        "license": { "type": "string", "description": "SPDX identifier for the plugin's own code and rules." },
+        "authors": { "type": "array", "items": { "type": "string" } },
+        "asset_provenance": {
+          "enum": ["hashes-only", "user-generated", "bundled-crops"],
+          "description": "hashes-only: no game imagery ships, only perceptual descriptors — always preferred. user-generated: templates are captured locally from the user's own install on first run. bundled-crops: small UI fragments ship in the package; keep them minimal and never wholesale artwork."
+        },
+        "attribution": { "type": "string", "maxLength": 400 },
+        "trademark_notice": {
+          "type": "string",
+          "description": "Game names are trademarks of their publishers. State that this plugin is unofficial and unaffiliated."
+        }
+      }
+    },
+
+    "hot_reload": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "What this plugin can swap live without restarting the app or the game (ADR-0012). Anything absent defaults to false. Capabilities and api_version are deliberately absent: a plugin that could grant itself new powers by writing to a watched file would be a privilege escalation, not a feature.",
+      "properties": {
+        "rules": { "type": "boolean", "default": true },
+        "assets": { "type": "boolean", "default": true },
+        "profiles": { "type": "boolean", "default": true },
+        "presentation": { "type": "boolean", "default": true }
+      }
+    },
+
+    "signals": {
+      "type": "array",
+      "description": "The declared state schema. The host validates emitted values against it; the UI renders any schema generically.",
+      "items": {
+        "type": "object",
+        "required": ["id", "value_type"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)*$" },
+          "value_type": { "enum": ["bool", "int", "float", "ratio", "text", "point", "rect", "enum"] },
+          "description": { "type": "string" },
+          "unit": { "type": "string" }
+        }
+      }
+    },
+
+    "intents": {
+      "type": "array",
+      "description": "Names only. What each one does lives in rules.json.",
+      "items": { "type": "string", "pattern": "^[a-z0-9_]+$" }
+    },
+
+    "capabilities": {
+      "type": "array",
+      "description": "Shown to the user at install time and enforced by the host. NOT hot-reloadable.",
+      "items": {
+        "type": "string",
+        "pattern": "^(capture|input\\.(mouse|keyboard|gamepad)|fs\\.read:.+|net:.+)$"
+      }
+    }
+  }
+}

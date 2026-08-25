@@ -18,6 +18,13 @@ Third-party plugins live in **their authors' own repositories**. You publish a
 release, then open a pull request here adding a file under `plugins/` pointing
 at it with a checksum. We carry neither your code nor your maintenance.
 
+## Start from the template
+
+[`template/`](template/) is a complete, working plugin — manifest, rules,
+profile, release config. Copy it into your own repository and edit. No
+compilation, no Rust, no linking: a plugin is data, which is what makes the API
+stable and live reload nearly free.
+
 ## Submitting
 
 1. Read [`POLICY.md`](POLICY.md). Multiplayer titles are refused, and
@@ -44,5 +51,6 @@ registry/
 ├── plugins/<id>.json   ← the source of truth, one file per plugin
 ├── index.json          ← generated from plugins/, published via Pages
 ├── schema/             ← JSON Schema for entries and for plugin manifests
+├── template/           ← copy this to start a plugin
 └── POLICY.md
 ```

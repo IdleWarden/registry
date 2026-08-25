@@ -1,0 +1,60 @@
+{
+  "$schema": "https://idlewarden.github.io/registry/schema/plugin-manifest.schema.json",
+
+  "id": "dev.yourname.your-game",
+  "name": "Your Game",
+  "version": "26.8.1",
+  "api_version": "^0.1",
+
+  "game": {
+    "title": "Your Game",
+    "steam_appid": 123456,
+    "executable": "YourGame.exe",
+    "window_title": "Your Game",
+    "tested_versions": [
+      {
+        "version": "1.4.2",
+        "status": "verified",
+        "tested_on": "2026-08-25",
+        "notes": "1920x1080 and 2560x1440, English UI, borderless windowed."
+      }
+    ]
+  },
+
+  "multiplayer": false,
+
+  "presentation": {
+    "description": "One sentence on what this automates. Say what it does NOT do too.",
+    "icon": "assets/icon.png",
+    "screenshots": [
+      { "path": "assets/screenshot-main.png", "caption": "Main screen with the regions this plugin reads." }
+    ],
+    "tags": ["idle", "incremental"],
+    "homepage": "https://github.com/yourname/idlewarden-your-game"
+  },
+
+  "rights": {
+    "license": "MIT",
+    "authors": ["Your Name <you@example.com>"],
+    "asset_provenance": "user-generated",
+    "trademark_notice": "Unofficial and unaffiliated. Your Game is a trademark of its publisher."
+  },
+
+  "hot_reload": {
+    "rules": true,
+    "assets": true,
+    "profiles": true,
+    "presentation": true
+  },
+
+  "signals": [
+    { "id": "ui.screen_id",       "value_type": "enum",  "description": "Which screen is shown." },
+    { "id": "resource.gold",      "value_type": "int",   "description": "Gold counter.", "unit": "gold" },
+    { "id": "upgrade.affordable", "value_type": "bool",  "description": "Is the next upgrade buyable." },
+    { "id": "progress.bar",       "value_type": "ratio", "description": "Main progress bar." }
+  ],
+
+  "intents": ["collect_reward", "buy_upgrade", "dismiss_popup"],
+
+  "capabilities": ["capture", "input.mouse"]
+}
