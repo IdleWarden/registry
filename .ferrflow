@@ -2,7 +2,7 @@
   "$schema": "https://ferrflow.com/schema/ferrflow.json",
 
   "workspace": {
-    "versioning": "semver",
+    "versioning": "calver-short",
     "tagTemplate": "v{version}",
     "recoverMissedReleases": true
   },
