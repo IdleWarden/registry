@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://idlewarden.github.io/registry/schema/plugin-manifest.schema.json",
   "title": "IdleWarden plugin manifest (plugin.json)",
-  "description": "The contract between a plugin and the host, plus the metadata the registry and UI need. Behaviour lives in rules.json, not here — that split is what makes hot reload safe (ADR-0012).",
+  "description": "The contract between a plugin and the host, plus the metadata the registry and UI need. Behaviour lives in rules.json, not here, that split is what makes hot reload safe (ADR-0012).",
   "type": "object",
   "required": ["id", "name", "version", "api_version", "game", "multiplayer", "rights"],
   "additionalProperties": false,
@@ -21,13 +21,13 @@
     "version": {
       "type": "string",
       "pattern": "^\\d{2}\\.\\d{1,2}\\.\\d{1,2}$",
-      "description": "calver-short, YY.M.PATCH (e.g. 26.8.1). Managed by FerrFlow — do not edit by hand. A plugin version tracks the GAME's patches, which carry no compatibility meaning, so calendar versioning is honest where semver would lie. It still sorts correctly as semver, so the host's update check needs no special case.",
+      "description": "calver-short, YY.M.PATCH (e.g. 26.8.1). Managed by FerrFlow, do not edit by hand. A plugin version tracks the GAME's patches, which carry no compatibility meaning, so calendar versioning is honest where semver would lie. It still sorts correctly as semver, so the host's update check needs no special case.",
       "examples": ["26.8.1", "26.12.3"]
     },
 
     "api_version": {
       "type": "string",
-      "description": "Semver REQUIREMENT against the host's plugin API. Stays semver — this one genuinely carries compatibility meaning and must never be calver.",
+      "description": "Semver REQUIREMENT against the host's plugin API. Stays semver, this one genuinely carries compatibility meaning and must never be calver.",
       "examples": ["^0.1", ">=0.1, <0.3"]
     },
 
@@ -43,7 +43,7 @@
         "window_title": { "type": "string" },
         "tested_versions": {
           "type": "array",
-          "description": "Drives the compatibility banner in the UI. An empty list means 'never verified' and is shown as such — silence is not a claim of support.",
+          "description": "Drives the compatibility banner in the UI. An empty list means 'never verified' and is shown as such, silence is not a claim of support.",
           "items": {
             "type": "object",
             "required": ["version", "status"],
@@ -52,7 +52,7 @@
               "version": { "type": "string", "description": "Game version or build id as the game itself reports it." },
               "status": {
                 "enum": ["verified", "partial", "broken"],
-                "description": "verified: everything works. partial: some intents fail (say which in notes). broken: known not to work — the host refuses to start rather than flailing."
+                "description": "verified: everything works. partial: some intents fail (say which in notes). broken: known not to work, the host refuses to start rather than flailing."
               },
               "tested_on": { "type": "string", "format": "date" },
               "notes": { "type": "string", "maxLength": 400 }
@@ -102,7 +102,7 @@
         "authors": { "type": "array", "items": { "type": "string" } },
         "asset_provenance": {
           "enum": ["hashes-only", "user-generated", "bundled-crops"],
-          "description": "hashes-only: no game imagery ships, only perceptual descriptors — always preferred. user-generated: templates are captured locally from the user's own install on first run. bundled-crops: small UI fragments ship in the package; keep them minimal and never wholesale artwork."
+          "description": "hashes-only: no game imagery ships, only perceptual descriptors, always preferred. user-generated: templates are captured locally from the user's own install on first run. bundled-crops: small UI fragments ship in the package; keep them minimal and never wholesale artwork."
         },
         "attribution": { "type": "string", "maxLength": 400 },
         "trademark_notice": {

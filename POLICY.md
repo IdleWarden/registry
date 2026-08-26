@@ -3,7 +3,7 @@
 The engine is generic and cannot police what people build. This registry is
 curated, and that distinction is the project's whole defence. See
 [the full plugin policy](https://github.com/idlewarden/idlewarden/blob/main/PLUGIN_POLICY.md)
-in the main repository — this file exists so the rules travel with the registry,
+in the main repository, this file exists so the rules travel with the registry,
 and the main repository is authoritative if they ever diverge.
 
 ## Accepted

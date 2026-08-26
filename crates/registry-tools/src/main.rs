@@ -93,7 +93,7 @@ fn run(cli: &Cli) -> Result<bool> {
                     return Ok(true);
                 }
                 eprintln!(
-                    "{} is stale — run `registry-tools build-index` and commit the result.",
+                    "{} is stale, run `registry-tools build-index` and commit the result.",
                     path.display()
                 );
                 return Ok(false);
