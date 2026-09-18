@@ -399,3 +399,32 @@ fn the_index_carries_no_timestamp_so_regeneration_is_a_no_op() {
         index::render(&index::build(&entries, &[]))
     );
 }
+
+fn plugin_version() -> jsonschema::Validator {
+    let manifest = schema("plugin-manifest.schema.json");
+    validate::build_validator(&manifest["properties"]["version"]).unwrap()
+}
+
+#[test]
+fn a_plugin_version_counts_any_number_of_releases_in_a_month() {
+    let version = plugin_version();
+
+    for accepted in ["26.9.1", "26.9.19", "26.10.1", "26.9.142"] {
+        assert!(
+            version.is_valid(&json!(accepted)),
+            "{accepted} is what calver-short-seq emits, so the registry must take it"
+        );
+    }
+}
+
+#[test]
+fn a_plugin_version_is_still_calendar_shaped() {
+    let version = plugin_version();
+
+    for refused in ["26.9", "2026.9.1", "26.9.1-1", "1.0.0.1"] {
+        assert!(
+            !version.is_valid(&json!(refused)),
+            "{refused} is not calver-short-seq"
+        );
+    }
+}

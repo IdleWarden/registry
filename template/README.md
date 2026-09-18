@@ -12,7 +12,7 @@ your-plugin/
 ├── profiles/
 │   └── default.json   ← shipped defaults. The user's overrides live elsewhere and win.
 ├── assets/            ← templates, anchors, icon, screenshots. Hot-reloadable.
-├── .ferrflow          ← release automation. calver-short.
+├── .ferrflow          ← release automation. calver-short-seq.
 └── CHANGELOG.md       ← generated. Do not edit.
 ```
 
@@ -46,7 +46,7 @@ escalation dressed as a convenience.
 
 ## Versioning
 
-`version` is **calver-short**: `YY.M.PATCH`, e.g. `26.8.1`. FerrFlow manages it
+`version` is **calver-short-seq**: `YY.M.SEQ`, e.g. `26.8.1`, where `SEQ` counts releases within the month. FerrFlow manages it
 from your conventional commits, never edit it by hand.
 
 Why calendar and not semantic: a plugin version tracks *the game's* patches.
