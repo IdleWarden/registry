@@ -10,6 +10,7 @@
     "name": "cookie-clicker"
   },
   "loader": "bepinex",
+  "$comment": "An Electron or browser game usually loads mods itself: set `loader` to `game` and `mods_path` to the folder it reads, e.g. `resources/app/mods/local` for Cookie Clicker.",
   "game": {
     "title": "Cookie Clicker",
     "steam_appid": 1454400

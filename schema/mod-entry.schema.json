@@ -36,8 +36,14 @@
       }
     },
     "loader": {
-      "enum": ["bepinex", "melonloader", "reloaded-ii", "manual"],
-      "description": "How the user installs it. `manual` means a documented file drop."
+      "enum": ["bepinex", "melonloader", "reloaded-ii", "game", "manual"],
+      "description": "How the user installs it. `game` means the game has a mod folder of its own, named by `mods_path`. `manual` means a documented file drop."
+    },
+    "mods_path": {
+      "type": "string",
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+)*$",
+      "description": "Required by the `game` loader, forbidden otherwise: the mod folder inside the game directory, e.g. `resources/app/mods/local` for Cookie Clicker."
     },
     "game": {
       "type": "object",

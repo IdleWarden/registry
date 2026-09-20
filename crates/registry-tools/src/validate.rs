@@ -150,6 +150,34 @@ pub fn bridge_link_problems(
         .collect()
 }
 
+/// The installer pastes this into a path on the user's machine, so a schema
+/// pattern is not enough: it is judged as a path too, on every platform.
+pub fn mods_path_problem(raw: &RawEntry, entry: &ModEntry) -> Option<Problem> {
+    let inside_the_game = |path: &str| {
+        !path.is_empty()
+            && !path.contains("..")
+            && !path.starts_with('/')
+            && !path.contains(':')
+            && !path.contains('\\')
+    };
+
+    match (entry.loader.as_str(), entry.mods_path.as_deref()) {
+        ("game", None) => Some(Problem::new(
+            &raw.path,
+            "loads through the game's own loader but does not name its mod folder with `mods_path`",
+        )),
+        ("game", Some(path)) if !inside_the_game(path) => Some(Problem::new(
+            &raw.path,
+            format!("`mods_path` `{path}` is not a folder inside the game directory"),
+        )),
+        (loader, Some(path)) if loader != "game" => Some(Problem::new(
+            &raw.path,
+            format!("names `mods_path` `{path}`, which only a `game` loader installs into"),
+        )),
+        _ => None,
+    }
+}
+
 pub fn orphan_mod_problem(raw: &RawEntry, entry: &ModEntry, plugins: &[String]) -> Option<Problem> {
     (!plugins.contains(&entry.plugin)).then(|| {
         Problem::new(
@@ -212,6 +240,7 @@ pub fn check(
     for (raw, entry) in &typed_mods {
         problems.extend(filename_problem(raw));
         problems.extend(orphan_mod_problem(raw, entry, &plugin_ids));
+        problems.extend(mods_path_problem(raw, entry));
         problems.extend(attestation_problems(raw, entry));
         problems.extend(check_assets(raw, &entry.assets(), probe));
     }
