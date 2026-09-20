@@ -49,7 +49,8 @@ package.
 - [ ] The attestation repository matches the source repository.
 - [ ] `plugin` names a real entry under `plugins/`, and that entry declares
       `bridge:<name>` matching this mod's `bridge.name`.
-- [ ] `loader` is accurate; `manual` is only for a documented file drop.
+- [ ] `loader` is accurate; `game` names the game's own mod folder in `mods_path`
+      and nothing else may name one; `manual` is only for a documented file drop.
 - [ ] `game_versions` is populated. A mod is tied to a game build, not a title.
 - [ ] The game is one the plugin policy already accepts. A bridge does not buy
       an exemption from anything above.

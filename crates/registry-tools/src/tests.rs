@@ -301,6 +301,57 @@ fn a_mod_for_a_different_plugin_does_not_satisfy_the_capability() {
 }
 
 #[test]
+fn a_mod_that_the_game_loads_itself_names_the_folder_it_goes_in() {
+    let mut value = valid_mod("dev.example.mod", "dev.example.plugin", "cookie");
+    value["loader"] = json!("game");
+    let nameless = raw("m.json", value.clone());
+
+    assert!(
+        validate::mods_path_problem(&nameless, &typed::<ModEntry>(&nameless.value))
+            .is_some_and(|problem| problem.message.contains("mods_path")),
+        "without the folder the installer has nowhere to put it"
+    );
+
+    value["mods_path"] = json!("resources/app/mods/local");
+    let named = raw("m.json", value);
+    assert!(validate::mods_path_problem(&named, &typed::<ModEntry>(&named.value)).is_none());
+}
+
+#[test]
+fn a_mod_folder_that_climbs_out_of_the_game_is_refused() {
+    for hostile in [
+        "../../windows",
+        "/etc",
+        "C:/Windows",
+        "windows\\system32",
+        "mods/../..",
+        "",
+    ] {
+        let mut value = valid_mod("dev.example.mod", "dev.example.plugin", "cookie");
+        value["loader"] = json!("game");
+        value["mods_path"] = json!(hostile);
+        let entry = raw("m.json", value);
+
+        assert!(
+            validate::mods_path_problem(&entry, &typed::<ModEntry>(&entry.value)).is_some(),
+            "{hostile} was accepted as a folder inside the game"
+        );
+    }
+}
+
+#[test]
+fn only_a_game_loader_names_a_mod_folder() {
+    let mut value = valid_mod("dev.example.mod", "dev.example.plugin", "cookie");
+    value["mods_path"] = json!("resources/app/mods/local");
+    let entry = raw("m.json", value);
+
+    assert!(
+        validate::mods_path_problem(&entry, &typed::<ModEntry>(&entry.value)).is_some(),
+        "BepInEx decides where its plugins live, the entry does not"
+    );
+}
+
+#[test]
 fn a_mod_serving_a_plugin_that_does_not_exist_is_refused() {
     let mod_raw = raw(
         "m.json",

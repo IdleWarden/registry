@@ -32,6 +32,9 @@ pub struct EntryVersion {
 pub struct ModEntry {
     pub plugin: String,
     pub bridge: BridgeRef,
+    pub loader: String,
+    #[serde(default)]
+    pub mods_path: Option<String>,
     pub source: Source,
     pub versions: Vec<ModVersion>,
 }
