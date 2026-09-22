@@ -4,6 +4,12 @@ All notable changes to `registry` will be documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [26.9.3] - 2026-09-22
+
+### Features
+
+- feat(plugins): Cookie Clicker and its bridge mod
+
 ## [26.9.2] - 2026-09-20
 
 ### Features
