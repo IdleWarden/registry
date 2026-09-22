@@ -1,0 +1,27 @@
+{
+  "id": "dev.idlewarden.cookie-clicker",
+  "name": "Cookie Clicker",
+  "description": "Pops golden cookies, buys the cheapest upgrade and the building that pays back soonest. Reads the game through its mod, so every value is exact.",
+  "authors": ["The IdleWarden contributors"],
+  "license": "MPL-2.0",
+  "homepage": "https://github.com/IdleWarden/idlewarden/tree/main/plugins/cookie-clicker",
+  "game": {
+    "title": "Cookie Clicker",
+    "steam_appid": 1454400,
+    "executable": "Cookie Clicker.exe"
+  },
+  "multiplayer": false,
+  "source": {
+    "repository": "https://github.com/IdleWarden/idlewarden"
+  },
+  "trust": "official",
+  "versions": [
+    {
+      "version": "26.9.2",
+      "api_version": "^0.1",
+      "url": "https://github.com/IdleWarden/idlewarden/releases/download/plugin%2Fcookie-clicker%40v26.9.2/dev.idlewarden.cookie-clicker-26.9.2.zip",
+      "sha256": "c74ff817bc4763b55fc2301e4350955ed540b7f8ee735749c80545abab60825e",
+      "capabilities": ["bridge:cookie-clicker"]
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "dev.idlewarden.cookie-clicker-bridge",
+  "name": "IdleWarden bridge for Cookie Clicker",
+  "description": "Exposes what the game already knows over a local WebSocket and carries out intents through the game's own API. Blocks Steam achievements while enabled.",
+  "authors": ["The IdleWarden contributors"],
+  "license": "MPL-2.0",
+  "homepage": "https://github.com/IdleWarden/idlewarden/tree/main/mods/js",
+  "plugin": "dev.idlewarden.cookie-clicker",
+  "bridge": { "name": "cookie-clicker" },
+  "loader": "game",
+  "mods_path": "resources/app/mods/local",
+  "game": {
+    "title": "Cookie Clicker",
+    "steam_appid": 1454400
+  },
+  "source": {
+    "repository": "https://github.com/IdleWarden/idlewarden"
+  },
+  "trust": "official",
+  "versions": [
+    {
+      "version": "26.9.2",
+      "api_version": "^0.1",
+      "url": "https://github.com/IdleWarden/idlewarden/releases/download/mod%2Fcookie-clicker%40v26.9.2/IdleWarden.CookieClicker-26.9.2.zip",
+      "sha256": "2502205c9270ffb2aceceb8950fa1488a17a72baffcd4e301c27a7ba6225b6c1",
+      "attestation": { "repository": "IdleWarden/idlewarden" },
+      "game_versions": ["2.053"]
+    }
+  ]
+}
