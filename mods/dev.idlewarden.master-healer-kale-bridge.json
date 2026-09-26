@@ -1,0 +1,29 @@
+{
+  "id": "dev.idlewarden.master-healer-kale-bridge",
+  "name": "IdleWarden bridge for Master Healer Kale",
+  "description": "Reports the party, the mana and every unlocked spell over a local pipe, and casts through the game's own StartCastingSpell so the game validates cooldown, mana and target itself. Needs BepInEx already installed in the game.",
+  "authors": ["The IdleWarden contributors"],
+  "license": "MPL-2.0",
+  "homepage": "https://github.com/IdleWarden/idlewarden/tree/main/mods/src/IdleWarden.Kale",
+  "plugin": "dev.idlewarden.master-healer-kale",
+  "bridge": { "name": "master-healer-kale" },
+  "loader": "bepinex",
+  "game": {
+    "title": "Master Healer Kale",
+    "steam_appid": 4634490
+  },
+  "source": {
+    "repository": "https://github.com/IdleWarden/idlewarden"
+  },
+  "trust": "official",
+  "versions": [
+    {
+      "version": "26.9.2",
+      "api_version": "^0.1",
+      "url": "https://github.com/IdleWarden/idlewarden/releases/download/mod%2Fkale%40v26.9.2/IdleWarden.Kale-26.9.2.zip",
+      "sha256": "2ea9e16352c7f73a897a4dee4d367a045134609412fb71494ea4f52dce13f14f",
+      "attestation": { "repository": "IdleWarden/idlewarden" },
+      "game_versions": ["1.5"]
+    }
+  ]
+}
