@@ -1,0 +1,27 @@
+{
+  "id": "dev.idlewarden.master-healer-kale",
+  "name": "Master Healer Kale",
+  "description": "Plays the healer: raises whoever went down, heals the party when it sags, heals whoever is closest to death, and meditates when mana runs dry. Buys the cheapest skill node while in the tavern. Reads the game through its mod, so every value is exact. Leaves achievements alone, which means automated play can unlock them.",
+  "authors": ["The IdleWarden contributors"],
+  "license": "MPL-2.0",
+  "homepage": "https://github.com/IdleWarden/idlewarden/tree/main/plugins/master-healer-kale",
+  "game": {
+    "title": "Master Healer Kale",
+    "steam_appid": 4634490,
+    "executable": "MasterHealerKale.exe"
+  },
+  "multiplayer": false,
+  "source": {
+    "repository": "https://github.com/IdleWarden/idlewarden"
+  },
+  "trust": "official",
+  "versions": [
+    {
+      "version": "26.9.2",
+      "api_version": "^0.1",
+      "url": "https://github.com/IdleWarden/idlewarden/releases/download/plugin%2Fmaster-healer-kale%40v26.9.2/dev.idlewarden.master-healer-kale-26.9.2.zip",
+      "sha256": "8422d6f1b91b63b6dd8eaf79cc7c84059a94e19dc0d28bf5e6609ef8e82c80ff",
+      "capabilities": ["bridge:master-healer-kale"]
+    }
+  ]
+}
