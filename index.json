@@ -38,7 +38,7 @@
     {
       "id": "dev.idlewarden.master-healer-kale",
       "name": "Master Healer Kale",
-      "description": "Plays the healer: raises whoever went down, heals the party when it sags, heals whoever is closest to death, and meditates when mana runs dry. Buys the cheapest skill node while in the tavern. Reads the game through its mod, so every value is exact. Leaves achievements alone, which means automated play can unlock them.",
+      "description": "Plays the healer: raises whoever went down, heals the party when it sags, shields whoever is still uncovered, heals whoever is closest to death, and meditates when mana runs dry. In the tavern, buys the cheapest skill node, research and training it can afford. Reads the game through its mod, so every value is exact. Leaves achievements alone, which means automated play can unlock them.",
       "authors": [
         "The IdleWarden contributors"
       ],
@@ -55,6 +55,15 @@
       },
       "trust": "official",
       "versions": [
+        {
+          "version": "26.10.2",
+          "api_version": "^0.1",
+          "url": "https://github.com/IdleWarden/idlewarden/releases/download/plugin%2Fmaster-healer-kale%40v26.10.2/dev.idlewarden.master-healer-kale-26.10.2.zip",
+          "sha256": "e78bc10a1eb363c522e747b7e468d6d913639ea3908bbc5391355aede44523b1",
+          "capabilities": [
+            "bridge:master-healer-kale"
+          ]
+        },
         {
           "version": "26.9.3",
           "api_version": "^0.1",
@@ -118,12 +127,12 @@
     {
       "id": "dev.idlewarden.master-healer-kale-bridge",
       "name": "IdleWarden bridge for Master Healer Kale",
-      "description": "Reports the party, the mana and every unlocked spell over a local pipe, and casts through the game's own StartCastingSpell so the game validates cooldown, mana and target itself. Needs BepInEx already installed in the game.",
+      "description": "Reports the party, its shields, the mana, every unlocked spell and what the tavern can buy over a local pipe, and casts through the game's own StartCastingSpell so the game validates cooldown, mana and target itself. Needs BepInEx already installed in the game.",
       "authors": [
         "The IdleWarden contributors"
       ],
       "license": "MPL-2.0",
-      "homepage": "https://github.com/IdleWarden/idlewarden/tree/main/mods/src/IdleWarden.Kale",
+      "homepage": "https://github.com/IdleWarden/idlewarden/tree/main/mods/kale",
       "plugin": "dev.idlewarden.master-healer-kale",
       "bridge": {
         "name": "master-healer-kale"
@@ -138,6 +147,18 @@
       },
       "trust": "official",
       "versions": [
+        {
+          "version": "26.10.2",
+          "api_version": "^0.1",
+          "url": "https://github.com/IdleWarden/idlewarden/releases/download/mod%2Fkale%40v26.10.2/IdleWarden.Kale-26.10.2.zip",
+          "sha256": "91570ce633f6a35f06096b70a7a5a9bcb32d157ea62faf09a20c0f29e1cda36f",
+          "attestation": {
+            "repository": "IdleWarden/idlewarden"
+          },
+          "game_versions": [
+            "1.5"
+          ]
+        },
         {
           "version": "26.9.4",
           "api_version": "^0.1",
