@@ -17,6 +17,13 @@
   "trust": "official",
   "versions": [
     {
+      "version": "26.10.3",
+      "api_version": "^0.1",
+      "url": "https://github.com/IdleWarden/idlewarden/releases/download/plugin%2Fmaster-healer-kale%40v26.10.3/dev.idlewarden.master-healer-kale-26.10.3.zip",
+      "sha256": "16080fafc8cad5672c475363fc6bce7b37cd6e5e03b80a5f44dc3cacff48bc03",
+      "capabilities": ["bridge:master-healer-kale"]
+    },
+    {
       "version": "26.10.2",
       "api_version": "^0.1",
       "url": "https://github.com/IdleWarden/idlewarden/releases/download/plugin%2Fmaster-healer-kale%40v26.10.2/dev.idlewarden.master-healer-kale-26.10.2.zip",
