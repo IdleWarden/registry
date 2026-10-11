@@ -4,6 +4,12 @@ All notable changes to `registry` will be documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [26.10.4] - 2026-10-11
+
+### Features
+
+- feat(registry): publish the Kale mod 26.10.6 (#16)
+
 ## [26.10.3] - 2026-10-10
 
 ### Features
