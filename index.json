@@ -157,6 +157,18 @@
       "trust": "official",
       "versions": [
         {
+          "version": "26.10.6",
+          "api_version": "^0.1",
+          "url": "https://github.com/IdleWarden/idlewarden/releases/download/mod%2Fkale%40v26.10.6/IdleWarden.Kale-26.10.6.zip",
+          "sha256": "6731dc049ab61a3d63a16a41f21db1e71b0d54e591ba106c2b0c26d5cda9c411",
+          "attestation": {
+            "repository": "IdleWarden/idlewarden"
+          },
+          "game_versions": [
+            "1.5"
+          ]
+        },
+        {
           "version": "26.10.4",
           "api_version": "^0.1",
           "url": "https://github.com/IdleWarden/idlewarden/releases/download/mod%2Fkale%40v26.10.4/IdleWarden.Kale-26.10.4.zip",
