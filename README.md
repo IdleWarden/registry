@@ -73,6 +73,7 @@ cargo run -p registry-tools -- validate                  # offline: schema, id, 
 cargo run -p registry-tools -- validate --check-assets   # also downloads each asset and verifies its sha256
 cargo run -p registry-tools -- build-index               # regenerate index.json from plugins/ and mods/
 cargo run -p registry-tools -- build-index --check       # fail if index.json is out of date
+cargo +nightly fuzz run <entries|index>                   # from fuzz/
 ```
 
 `index.json` is generated, never hand-edited, and its `generated_at` field stays

@@ -1,14 +1,5 @@
 // SPDX-License-Identifier: MPL-2.0
 
-mod asset;
-mod entry;
-mod index;
-mod problem;
-mod validate;
-
-#[cfg(test)]
-mod tests;
-
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
@@ -16,8 +7,9 @@ use std::process::ExitCode;
 use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
 
-use asset::HttpProbe;
-use validate::Schemas;
+use registry_tools::asset::{self, HttpProbe};
+use registry_tools::validate::{self, Schemas};
+use registry_tools::{entry, index};
 
 #[derive(Parser)]
 #[command(name = "registry-tools", about = "IdleWarden plugin registry tooling")]
