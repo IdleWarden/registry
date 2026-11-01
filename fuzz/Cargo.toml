@@ -1,0 +1,29 @@
+[package]
+name = "registry-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+registry-tools = { path = "../crates/registry-tools" }
+serde_json = "1"
+
+[workspace]
+
+[[bin]]
+name = "entries"
+path = "fuzz_targets/entries.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "index"
+path = "fuzz_targets/index.rs"
+test = false
+doc = false
+bench = false
